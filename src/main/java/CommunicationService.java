@@ -11,7 +11,7 @@ public class CommunicationService {
     private static String url;
     private Duration timeout = Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS);
 
-    private HttpClient client;
+    private final HttpClient client;
 
     CommunicationService() {
         client = HttpClient.newHttpClient();

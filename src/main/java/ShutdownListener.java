@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class ShutdownListener implements Runnable {
+class ShutdownListener implements Runnable {
     private boolean running = false;
     private boolean exit = false;
 
@@ -12,9 +12,7 @@ public class ShutdownListener implements Runnable {
     @Override
     public void run() {
         running = true;
-
         Scanner sc = new Scanner(System.in);
-        sc.hasNext();
         exit = true;
     }
 
