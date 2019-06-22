@@ -30,7 +30,12 @@ public class CommunicationService {
                 .build();
     }
 
-    HttpResponse sendRequest(HttpRequest request) throws IOException, InterruptedException {
+    HttpResponse sendRequest(HttpRequest request)  {
+        try {
             return this.client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
