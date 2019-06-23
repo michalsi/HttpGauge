@@ -12,12 +12,13 @@ It doesn't take into account few important factors including:
 
 ### Prerequisites
 Maven
-Java 12 - to use lower version change configuration in pom.xml
+Java 12 - to use lower version change configuration in `pom.xml`
 
-```   <properties>
+```   
+<properties>
         <maven.compiler.source>12</maven.compiler.source>
         <maven.compiler.target>12</maven.compiler.target>
-    </properties>
+</properties>
 ```
 
 ### Execute
