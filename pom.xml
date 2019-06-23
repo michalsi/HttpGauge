@@ -6,7 +6,7 @@
 
     <groupId>michal.si.HttpGauge</groupId>
     <artifactId>HttpGauge</artifactId>
-    <version>${env.PROJECT_VERSION}</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -58,7 +58,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>HttpGauge</mainClass>
+                                    <mainClass>HttpGaugeClient</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

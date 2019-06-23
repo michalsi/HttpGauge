@@ -1,51 +1,64 @@
-import com.google.inject.Inject;
-
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.logging.Logger;
 
-import static java.util.logging.Level.INFO;
+class HttpGauge {
 
-public class HttpGauge {
+    private final static long MILLISECONDS = 1000;
+    private final String DEFAULT_URL = PropertiesLoader.getProperty("defaultUrl");
+    private String url = ConfigLoader.getEnvOrElse("URL", DEFAULT_URL);
+    private final long DEFAULT_POLLING_TIME_SECONDS = Long.valueOf(PropertiesLoader.getProperty("defaultPoolingTimeSeconds"));
+    private long pollingTime = ConfigLoader.getEnvOrElse("POLLING_TIME_SECONDS", DEFAULT_POLLING_TIME_SECONDS) * MILLISECONDS;
 
-    public static void main(String[] args) {
+    private ShutdownListener shutdownListener;
+    private Timer timer;
+    private CsvHandler csv;
+    private CommunicationService communicationService;
 
-        final String DEFAULT_URL = PropertiesLoader.getProperty("defaultUrl");
-        String url = ConfigLoader.getEnvOrElse("URL", DEFAULT_URL);
+    HttpGauge() {
+        communicationService = new CommunicationService();
+        timer = new Timer();
+        csv = new CsvHandler(PropertiesLoader.getProperty("resultFilePath"));
+    }
 
-        final long MILLISECONDS = 1000;
-        final long DEFAULT_POLLING_TIME_SECONDS = 60;
-        long pollingTime = ConfigLoader.getEnvOrElse("POLLING_TIME_SECONDS", DEFAULT_POLLING_TIME_SECONDS) * MILLISECONDS;
+    void execute(){
+        executeMeasurement(communicationService.buildRequest(url));
+    }
 
-        CommunicationService communicationService = new CommunicationService();
-        Timer timer = new Timer();
-        CsvHandler csv = new CsvHandler(PropertiesLoader.getProperty("resultFilePath"));
-
-        HttpRequest request = communicationService.buildRequest(url);
-        HttpResponse response;
-        System.out.println("url" + url);
+    private void executeMeasurement(HttpRequest request) {
         try {
-            ShutdownListener shutdownListener = new ShutdownListener();
-
+            shutdownListener = new ShutdownListener();
             while (true) {
                 timer.start();
-                response = communicationService.sendRequest(request);
+                HttpResponse response = communicationService.sendRequest(request);
                 timer.stop();
-
                 saveResponse(timer, csv, response);
-                Thread.sleep(pollingTime);
-
-                if (!shutdownListener.isRunning()) {
-                    new Thread(shutdownListener).start();
-
-                } else if (shutdownListener.shouldExit()) {
-                    throw new InterruptedException();
-                }
+                checkGracefulShutdown();
             }
         } catch (InterruptedException e) {
             System.out.println("Program is shutting down");
         } finally {
             csv.close();
+        }
+    }
+
+    private void checkGracefulShutdown() throws InterruptedException {
+        if (pollingTime > MILLISECONDS) {
+            long timeIncrement = MILLISECONDS;
+            for (long timeProbing = 0; timeProbing <= pollingTime; timeProbing+=timeIncrement){
+                checkUserInputForShutdown();
+                Thread.sleep(timeIncrement);
+            }
+        }else{
+            checkUserInputForShutdown();
+            Thread.sleep(pollingTime);
+        }
+    }
+
+    private void checkUserInputForShutdown() throws InterruptedException {
+        if (!shutdownListener.isRunning()) {
+            new Thread(shutdownListener).start();
+        } else if (shutdownListener.shouldExit()) {
+            throw new InterruptedException();
         }
     }
 
