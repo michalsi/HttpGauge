@@ -36,7 +36,7 @@ Optional parameters
 
 ## Results
 
-Results are printed on the console and stored in `results.csv` file
+Results are printed on the console and stored in `./target/results.csv` file
 
 ## TODO
 * Tests...
