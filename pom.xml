@@ -6,7 +6,7 @@
 
     <groupId>michal.si.HttpGauge</groupId>
     <artifactId>HttpGauge</artifactId>
-    <version>1.0</version>
+    <version>${env.PROJECT_VERSION}</version>
     <packaging>jar</packaging>
 
     <properties>
