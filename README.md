@@ -11,8 +11,9 @@ It doesn't take into account few important factors including:
 ## How to run it
 
 ### Prerequisites
-Maven
-Java 12 - to use lower version change configuration in `pom.xml`
+
+* Maven
+* Java 12 - to use lower version change configuration in `pom.xml`
 
 ```   
 <properties>
