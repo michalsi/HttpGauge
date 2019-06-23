@@ -6,8 +6,11 @@ class CsvHandler {
 
     private FileWriter fileWriter;
     private PrintWriter printWriter;
+    private String filePath;
 
     CsvHandler(String filePath) {
+        this.filePath = filePath;
+
         try {
             fileWriter = new FileWriter(filePath);
             printWriter = new PrintWriter(fileWriter);
@@ -25,6 +28,7 @@ class CsvHandler {
     void close() {
         try {
             fileWriter.close();
+            System.out.println("Results file saved in:" + filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }

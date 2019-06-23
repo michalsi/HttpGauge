@@ -1,19 +1,29 @@
+import com.google.inject.Inject;
+
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.INFO;
 
 public class HttpGauge {
 
     public static void main(String[] args) {
 
+        final String DEFAULT_URL = PropertiesLoader.getProperty("defaultUrl");
+        String url = ConfigLoader.getEnvOrElse("URL", DEFAULT_URL);
+
+        final long MILLISECONDS = 1000;
+        final long DEFAULT_POLLING_TIME_SECONDS = 60;
+        long pollingTime = ConfigLoader.getEnvOrElse("POLLING_TIME_SECONDS", DEFAULT_POLLING_TIME_SECONDS) * MILLISECONDS;
+
         CommunicationService communicationService = new CommunicationService();
         Timer timer = new Timer();
         CsvHandler csv = new CsvHandler(PropertiesLoader.getProperty("resultFilePath"));
 
-        String url = "http://www.apache.org/";
         HttpRequest request = communicationService.buildRequest(url);
         HttpResponse response;
-
-
+        System.out.println("url" + url);
         try {
             ShutdownListener shutdownListener = new ShutdownListener();
 
@@ -23,7 +33,7 @@ public class HttpGauge {
                 timer.stop();
 
                 saveResponse(timer, csv, response);
-                Thread.sleep(5000);
+                Thread.sleep(pollingTime);
 
                 if (!shutdownListener.isRunning()) {
                     new Thread(shutdownListener).start();

@@ -8,8 +8,7 @@ import java.time.Duration;
 public class CommunicationService {
 
     private static final int DEFAULT_TIMEOUT_SECONDS = 30;
-    private static String url;
-    private Duration timeout = Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS);
+    private Duration timeout = Duration.ofSeconds(ConfigLoader.getEnvOrElse("REQUEST_TIMEOUT_SECONDS", DEFAULT_TIMEOUT_SECONDS));
 
     private final HttpClient client;
 

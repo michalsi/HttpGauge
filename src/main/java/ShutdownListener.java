@@ -13,6 +13,7 @@ class ShutdownListener implements Runnable {
     public void run() {
         running = true;
         Scanner sc = new Scanner(System.in);
+        sc.next();
         exit = true;
     }
 
