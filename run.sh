@@ -6,8 +6,8 @@ export REQUEST_TIMEOUT_SECONDS=30
 
 usage="$(basename "$0") [-h] [-p] [-r] [-u]
 Script builds and executes HttpGauge program
-Optional parameters to pass
-    -h  Show this help text
+Optional parameters
+    -h  Show help text
     -p  Polling time frequency in seconds
     -r  HTTP Requests timeout in seconds
     -u  Target URL
